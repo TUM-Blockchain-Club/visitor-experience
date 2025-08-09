@@ -76,8 +76,12 @@ export default function DashboardPage() {
       const url = `${window.location.origin}/api/calendar/${data.calendarId}`;
       setCalendarUrl(url);
 
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Произошла неизвестная ошибка.');
+      }
     } finally {
       setLoading(false);
     }

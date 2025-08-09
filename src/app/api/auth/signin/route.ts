@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { adminAuth } from '@/lib/firebase/admin';
 import { auth } from '@/lib/firebase/client'; // Импортируем клиентский auth
 import { sendSignInLinkToEmail } from 'firebase/auth'; // Импортируем функцию для отправки ссылки
 import { z } from 'zod';

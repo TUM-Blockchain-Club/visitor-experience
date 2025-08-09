@@ -29,11 +29,16 @@ export default function SignInForm() {
         throw new Error(data.message || 'Что-то пошло не так');
       }
 
+      // Сохраняем email в localStorage
       window.localStorage.setItem('emailForSignIn', email);
       setMessage('Проверьте свою почту! Мы отправили вам ссылку для входа.');
       
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Произошла неизвестная ошибка.');
+      }
     } finally {
       setLoading(false);
     }

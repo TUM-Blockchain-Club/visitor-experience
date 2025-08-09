@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     let decodedToken;
     try {
       decodedToken = await adminAuth.verifySessionCookie(sessionCookie, true);
-    } catch (error) {
+    } catch {
       return NextResponse.json({ message: 'Невалидная сессия.' }, { status: 401 });
     }
 
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     const userSelectionRef = adminDb.collection('user_selections').doc(userId);
     const userSelectionDoc = await userSelectionRef.get();
 
-    let calendarId = userSelectionDoc.exists ? userSelectionDoc.data()?.calendarId : uuidv4();
+    const calendarId = userSelectionDoc.exists ? userSelectionDoc.data()?.calendarId : uuidv4();
 
     await userSelectionRef.set({
       userId,
