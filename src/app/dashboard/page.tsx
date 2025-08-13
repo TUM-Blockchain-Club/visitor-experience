@@ -8,15 +8,13 @@ import { useRouter } from 'next/navigation';
 import { MOCK_EVENTS, ConferenceEvent } from '@/lib/mockEvents';
 
 function EventCard({ event, onToggle, isSelected }: { event: ConferenceEvent; onToggle: (eventId: string) => void; isSelected: boolean; }) {
-  const formatTime = (dateString: string) => new Date(dateString).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-
   return (
     <div className={`p-4 border rounded-lg ${isSelected ? 'bg-blue-100 border-blue-400' : 'bg-white'}`}>
       <div className="flex justify-between items-start">
         <div>
           <h3 className="font-bold text-lg">{event.title}</h3>
           <p className="text-sm text-gray-600">
-            {formatTime(event.startTime)} - {formatTime(event.endTime)}
+            {event.time}
           </p>
           <p className="text-gray-800 mt-2">{event.description}</p>
         </div>
@@ -45,7 +43,7 @@ export default function DashboardPage() {
   };
 
   const handleToggleEvent = (eventId: string) => {
-    setCalendarUrl(null); // Сбрасываем ссылку при изменении выбора
+    setCalendarUrl(null); // Reset link on selection change
     setSelectedEvents(prev => {
       const newSelection = new Set(prev);
       if (newSelection.has(eventId)) {
@@ -70,9 +68,9 @@ export default function DashboardPage() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Не удалось сохранить календарь.');
+      if (!res.ok) throw new Error(data.message || 'Failed to save calendar.');
 
-      // Формируем новую, правильную ссылку
+      // Form the new, correct link
       const url = `${window.location.origin}/api/calendar/${data.calendarId}`;
       setCalendarUrl(url);
 
@@ -80,7 +78,7 @@ export default function DashboardPage() {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError('Произошла неизвестная ошибка.');
+        setError('An unknown error occurred.');
       }
     } finally {
       setLoading(false);
@@ -88,15 +86,15 @@ export default function DashboardPage() {
   }
 
   if (!user) {
-    return <div>Загрузка...</div>;
+    return <div>Loading...</div>;
   }
 
   return (
     <div className="container mx-auto p-4">
       <header className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Программа конференции</h1>
-          <p className="text-gray-600">Вошли как: {user.email}</p>
+          <h1 className="text-2xl font-bold">Conference Program</h1>
+          <p className="text-gray-600">Signed in as: {user.email}</p>
         </div>
         <div>
           <button
@@ -104,13 +102,13 @@ export default function DashboardPage() {
             disabled={loading || selectedEvents.size === 0}
             className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 mr-4 disabled:opacity-50"
           >
-            {loading ? 'Сохранение...' : 'Получить ссылку на календарь'}
+            {loading ? 'Saving...' : 'Get Calendar Link'}
           </button>
           <button
             onClick={handleSignOut}
             className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
           >
-            Выйти
+            Sign Out
           </button>
         </div>
       </header>
@@ -119,8 +117,8 @@ export default function DashboardPage() {
 
       {calendarUrl && (
         <div className="my-4 p-4 bg-blue-100 border border-blue-300 rounded-md">
-          <h3 className="font-bold">Ваша персональная ссылка на календарь:</h3>
-          <p className="text-sm text-gray-700">Скопируйте эту ссылку и добавьте ее в ваше календарное приложение (Google Calendar, Apple Calendar и т.д.)</p>
+          <h3 className="font-bold">Your personal calendar link:</h3>
+          <p className="text-sm text-gray-700">Copy this link and add it to your calendar application (Google Calendar, Apple Calendar, etc.)</p>
           <input
             type="text"
             readOnly

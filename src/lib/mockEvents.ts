@@ -1,59 +1,59 @@
 export interface ConferenceEvent {
   id: string;
   title: string;
-  startTime: string; // В формате ISO
-  endTime: string;   // В формате ISO
+  startTime: string; // ISO format
+  endTime: string;   // ISO format
   description: string;
 }
 
 export const MOCK_EVENTS: ConferenceEvent[] = [
   {
     id: 'evt-001',
-    title: 'Регистрация и утренний кофе',
+    title: 'Registration and Morning Coffee',
     startTime: '2025-08-14T09:00:00Z',
     endTime: '2025-08-14T10:00:00Z',
-    description: 'Начните день с нами, получите свой бейдж и насладитесь чашечкой кофе.',
+    description: 'Start your day with us, get your badge and enjoy a cup of coffee.',
   },
   {
     id: 'evt-002',
-    title: 'Открытие конференции: Будущее Веб-разработки',
+    title: 'Conference Opening: The Future of Web Development',
     startTime: '2025-08-14T10:00:00Z',
     endTime: '2025-08-14T11:00:00Z',
-    description: 'Ключевой доклад от основателя Vercel о трендах в Next.js и не только.',
+    description: 'Keynote from the founder of Vercel on trends in Next.js and beyond.',
   },
   {
     id: 'evt-003',
-    title: 'Глубокое погружение в React Server Components',
+    title: 'Deep Dive into React Server Components',
     startTime: '2025-08-14T11:30:00Z',
     endTime: '2025-08-14T12:30:00Z',
-    description: 'Технический доклад о том, как работают и когда стоит использовать RSC.',
+    description: 'A technical talk on how RSC works and when to use it.',
   },
   {
     id: 'evt-004',
-    title: 'Состояние CSS в 2024 году',
+    title: 'The State of CSS in 2024',
     startTime: '2025-08-14T11:30:00Z',
     endTime: '2025-08-14T12:30:00Z',
-    description: 'Параллельный доклад о новых возможностях CSS, которые вы можете использовать уже сегодня.',
+    description: 'A parallel talk on new CSS features you can use today.',
   },
   {
     id: 'evt-005',
-    title: 'Обед и нетворкинг',
+    title: 'Lunch and Networking',
     startTime: '2025-08-14T12:30:00Z',
     endTime: '2025-08-14T14:00:00Z',
-    description: 'Время подкрепиться и пообщаться с коллегами и спикерами.',
+    description: 'Time to refuel and chat with colleagues and speakers.',
   },
   {
     id: 'evt-006',
-    title: 'Мастер-класс: Создание безопасного API с помощью GraphQL',
+    title: 'Workshop: Building a Secure API with GraphQL',
     startTime: '2025-08-14T14:00:00Z',
     endTime: '2025-08-14T16:00:00Z',
-    description: 'Практический воркшоп по созданию и защите вашего API.',
+    description: 'A hands-on workshop on creating and securing your API.',
   },
   {
     id: 'evt-007',
-    title: 'Закрытие конференции и афтепати',
+    title: 'Conference Closing & Afterparty',
     startTime: '2025-08-14T16:30:00Z',
     endTime: '2025-08-14T18:00:00Z',
-    description: 'Подведение итогов и неформальное общение.',
+    description: 'Wrap-up and informal networking.',
   },
 ]; 
