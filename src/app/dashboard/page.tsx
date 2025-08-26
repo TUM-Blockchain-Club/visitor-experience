@@ -7,6 +7,13 @@ import { auth } from '@/lib/firebase/client';
 import { useRouter } from 'next/navigation';
 import { MOCK_EVENTS, ConferenceEvent } from '@/lib/mockEvents';
 
+function formatEventTime(startTime: string, endTime: string) {
+  const start = new Date(startTime);
+  const end = new Date(endTime);
+  // Example format: 14:00 - 16:00
+  return `${start.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })} - ${end.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}`;
+}
+
 function EventCard({ event, onToggle, isSelected }: { event: ConferenceEvent; onToggle: (eventId: string) => void; isSelected: boolean; }) {
   return (
     <div className={`p-4 border rounded-lg ${isSelected ? 'bg-blue-100 border-blue-400' : 'bg-white'}`}>
@@ -14,7 +21,7 @@ function EventCard({ event, onToggle, isSelected }: { event: ConferenceEvent; on
         <div>
           <h3 className="font-bold text-lg">{event.title}</h3>
           <p className="text-sm text-gray-600">
-            {event.time}
+            {formatEventTime(event.startTime, event.endTime)}
           </p>
           <p className="text-gray-800 mt-2">{event.description}</p>
         </div>

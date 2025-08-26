@@ -11,7 +11,8 @@ const saveSchema = z.object({
 export async function POST(request: Request) {
   try {
     // 1. Проверяем аутентификацию пользователя
-    const sessionCookie = cookies().get('session')?.value;
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get('session')?.value;
     if (!sessionCookie) {
       return NextResponse.json({ message: 'Не авторизован.' }, { status: 401 });
     }
@@ -45,7 +46,7 @@ export async function POST(request: Request) {
 
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ message: error.errors[0].message }, { status: 400 });
+      return NextResponse.json({ message: error.issues[0].message }, { status: 400 });
     }
     console.error('Ошибка при сохранении календаря:', error);
     return NextResponse.json({ message: 'Внутренняя ошибка сервера.' }, { status: 500 });

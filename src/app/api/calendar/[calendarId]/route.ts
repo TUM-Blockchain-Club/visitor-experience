@@ -1,14 +1,16 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { adminDb } from '@/lib/firebase/admin';
 import { MOCK_EVENTS } from '@/lib/mockEvents'; 
 import * as ics from 'ics';
 
+type Params = Promise<{ calendarId: string }>;
+
 export async function GET(
-  request: Request,
-  { params }: { params: { calendarId: string } }
+  request: NextRequest,
+  { params }: { params: Params }
 ) {
   try {
-    const calendarId = params.calendarId;
+    const { calendarId } = await params;
 
     const querySnapshot = await adminDb.collection('user_selections')
       .where('calendarId', '==', calendarId)

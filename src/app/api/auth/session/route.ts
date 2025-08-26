@@ -12,7 +12,8 @@ export async function POST(request: Request) {
     const expiresIn = 60 * 60 * 24 * 14 * 1000;
     const sessionCookie = await adminAuth.createSessionCookie(token, { expiresIn });
 
-    cookies().set('session', sessionCookie, {
+    const cookieStore = await cookies();
+    cookieStore.set('session', sessionCookie, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: expiresIn,
@@ -28,6 +29,7 @@ export async function POST(request: Request) {
 
 // Этот эндпоинт будет удалять cookie сессии при выходе пользователя.
 export async function DELETE() {
-  cookies().delete('session');
+  const cookieStore = await cookies();
+  cookieStore.delete('session');
   return NextResponse.json({ status: 'success' });
 } 
