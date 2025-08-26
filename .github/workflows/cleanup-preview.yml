@@ -1,0 +1,41 @@
+name: "Cleanup Preview"
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - development
+      - main
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  cleanup:
+    name: "cleanup-preview"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment PR with Cleanup Message
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.issue.number;
+            const wasMerged = context.payload.pull_request.merged;
+            
+            const commentBody = wasMerged 
+              ? `✅ **Pull Request Merged**
+              
+              This pull request has been merged! The preview deployment is no longer needed and will be automatically cleaned up by Vercel.
+              
+              The changes are now available on the development/main branch deployment.`
+              : `🗑️ **Pull Request Closed**
+              
+              This pull request has been closed. The preview deployment will be automatically cleaned up by Vercel.`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: commentBody
+            });
