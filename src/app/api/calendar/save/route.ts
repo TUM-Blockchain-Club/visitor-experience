@@ -5,32 +5,32 @@ import { cookies } from 'next/headers';
 import { v4 as uuidv4 } from 'uuid';
 
 const saveSchema = z.object({
-  selectedEventIds: z.array(z.string()).min(1, { message: 'Нужно выбрать хотя бы одно событие.' }),
+  selectedEventIds: z.array(z.string()).min(1, { message: 'At least one event must be selected.' }),
 });
 
 export async function POST(request: Request) {
   try {
-    // 1. Проверяем аутентификацию пользователя
+    // 1. Check user authentication
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get('session')?.value;
     if (!sessionCookie) {
-      return NextResponse.json({ message: 'Не авторизован.' }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized.' }, { status: 401 });
     }
 
     let decodedToken;
     try {
       decodedToken = await adminAuth.verifySessionCookie(sessionCookie, true);
     } catch {
-      return NextResponse.json({ message: 'Невалидная сессия.' }, { status: 401 });
+      return NextResponse.json({ message: 'Invalid session.' }, { status: 401 });
     }
 
     const userId = decodedToken.uid;
 
-    // 2. Валидируем тело запроса
+    // 2. Validate request body
     const body = await request.json();
     const { selectedEventIds } = saveSchema.parse(body);
     
-    // 3. Сохраняем данные в Firestore
+    // 3. Save data to Firestore
     const userSelectionRef = adminDb.collection('user_selections').doc(userId);
     const userSelectionDoc = await userSelectionRef.get();
 
@@ -42,13 +42,13 @@ export async function POST(request: Request) {
       calendarId,
     }, { merge: true });
 
-    return NextResponse.json({ message: 'Календарь успешно сохранен!', calendarId });
+    return NextResponse.json({ message: 'Calendar saved successfully!', calendarId });
 
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ message: error.issues[0].message }, { status: 400 });
     }
-    console.error('Ошибка при сохранении календаря:', error);
-    return NextResponse.json({ message: 'Внутренняя ошибка сервера.' }, { status: 500 });
+    console.error('Error saving calendar:', error);
+    return NextResponse.json({ message: 'Internal server error.' }, { status: 500 });
   }
 } 

@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/lib/firebase/client'; // Импортируем клиентский auth
-import { sendSignInLinkToEmail } from 'firebase/auth'; // Импортируем функцию для отправки ссылки
+import { auth } from '@/lib/firebase/client'; // Import client auth
+import { sendSignInLinkToEmail } from 'firebase/auth'; // Import the function to send the link
 import { z } from 'zod';
 
 const signInSchema = z.object({
-  email: z.string().email({ message: 'Неверный формат email' }),
+  email: z.string().email({ message: 'Invalid email format' }),
 });
 
 export async function POST(request: Request) {
@@ -13,32 +13,32 @@ export async function POST(request: Request) {
     const { email } = signInSchema.parse(body);
 
     const actionCodeSettings = {
-      // URL, на который пользователь будет перенаправлен после входа.
-      // Мы добавим параметры, чтобы завершить процесс аутентификации.
+      // URL to which the user will be redirected after signing in.
+      // We will add parameters to complete the authentication process.
       url: `${new URL(request.url).origin}/finish-signin`,
       handleCodeInApp: true,
     };
 
-    // Генерируем и отправляем ссылку для входа
-    // Для этого используется КЛИЕНТСКИЙ SDK, но на сервере.
-    // Это легальный и документированный способ, когда нет своего почтового сервера.
+    // Generate and send the sign-in link
+    // This uses the CLIENT SDK, but on the server.
+    // This is a legitimate and documented method when you don't have your own mail server.
     await sendSignInLinkToEmail(auth, email, actionCodeSettings);
 
-    // Временное сохранение email необходимо, чтобы связать его с пользователем
-    // когда он вернется по ссылке. Обычно это делают в localStorage или cookie.
-    // Мы вернем email клиенту, чтобы он его сохранил.
-    // TODO: Более надежно было бы установить cookie на сервере.
+    // Temporary storage of the email is necessary to associate it with the user
+    // when they return from the link. This is usually done in localStorage or a cookie.
+    // We will return the email to the client so it can be saved.
+    // TODO: It would be more reliable to set a cookie on the server.
 
     return NextResponse.json({
-      message: 'Ссылка для входа была отправлена на вашу почту.',
-      emailForVerification: email, // Возвращаем email для сохранения на клиенте
+      message: 'A sign-in link has been sent to your email.',
+      emailForVerification: email, // Return email to be saved on the client
     });
 
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ message: error.issues[0].message }, { status: 400 });
     }
-    console.error('Ошибка при отправке ссылки для входа:', error);
-    return NextResponse.json({ message: 'Внутренняя ошибка сервера' }, { status: 500 });
+    console.error('Error sending sign-in link:', error);
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 } 

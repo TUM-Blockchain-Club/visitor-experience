@@ -18,7 +18,7 @@ export async function GET(
       .get();
 
     if (querySnapshot.empty) {
-      return NextResponse.json({ message: 'Календарь не найден.' }, { status: 404 });
+      return NextResponse.json({ message: 'Calendar not found.' }, { status: 404 });
     }
 
     const userSelection = querySnapshot.docs[0].data();
@@ -38,12 +38,12 @@ export async function GET(
         description: event.description,
         start: startArray,
         end: endArray,
-        calName: 'Мой Календарь Конференции',
+        calName: 'My Conference Calendar',
       };
     });
 
     if (icsEvents.length === 0) {
-      // Возвращаем пустой, но валидный календарь
+      // Return an empty but valid calendar
       return new Response('BEGIN:VCALENDAR\nVERSION:2.0\nEND:VCALENDAR', {
         status: 200,
         headers: {
@@ -68,7 +68,7 @@ export async function GET(
     });
 
   } catch (error) {
-    console.error('Ошибка при генерации календаря:', error);
-    return NextResponse.json({ message: 'Внутренняя ошибка сервера.' }, { status: 500 });
+    console.error('Error generating calendar:', error);
+    return NextResponse.json({ message: 'Internal server error.' }, { status: 500 });
   }
 } 
