@@ -17,9 +17,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(false);
 
       if (user) {
-        // Пользователь вошел. Получаем его ID токен.
+        // User is signed in. Get their ID token.
         const token = await user.getIdToken();
-        // Отправляем токен на наш API для создания сессии
+        // Send the token to our API to create a session
         await fetch('/api/auth/session', {
           method: 'POST',
           headers: {
@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           body: JSON.stringify({ token }),
         });
       } else {
-        // Пользователь вышел. Удаляем сессионную cookie.
+        // User is signed out. Delete the session cookie.
         await fetch('/api/auth/session', { method: 'DELETE' });
       }
     });
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider value={{ user }}>
-      {loading ? <div>Загрузка...</div> : children}
+      {loading ? <div>Loading...</div> : children}
     </AuthContext.Provider>
   );
 };

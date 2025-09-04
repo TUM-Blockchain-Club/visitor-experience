@@ -26,18 +26,18 @@ export default function SignInForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || 'Что-то пошло не так');
+        throw new Error(data.message || 'Something went wrong');
       }
 
-      // Сохраняем email в localStorage
+      // Save email to localStorage
       window.localStorage.setItem('emailForSignIn', email);
-      setMessage('Проверьте свою почту! Мы отправили вам ссылку для входа.');
+      setMessage('Check your email! We have sent you a sign-in link.');
       
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError('Произошла неизвестная ошибка.');
+        setError('An unknown error occurred.');
       }
     } finally {
       setLoading(false);
@@ -46,7 +46,7 @@ export default function SignInForm() {
 
   return (
     <div className="max-w-md mx-auto mt-10">
-      <h1 className="text-2xl font-bold text-center mb-6">Войдите, чтобы продолжить</h1>
+      <h1 className="text-2xl font-bold text-center mb-6">Sign in to continue</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -67,7 +67,7 @@ export default function SignInForm() {
           disabled={loading}
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
         >
-          {loading ? 'Отправка...' : 'Получить ссылку для входа'}
+          {loading ? 'Sending...' : 'Get sign-in link'}
         </button>
       </form>
       {message && <p className="mt-4 text-center text-green-600">{message}</p>}

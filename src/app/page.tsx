@@ -15,8 +15,8 @@ export default function Home() {
     }
   }, [user, router]);
 
-  // Если пользователь аутентифицирован, ничего не показываем, пока идет редирект.
-  // Можно показать и спиннер загрузки.
+  // If the user is authenticated, show nothing while redirecting.
+  // A loading spinner could also be shown here.
   if (user) {
     return null;
   }
