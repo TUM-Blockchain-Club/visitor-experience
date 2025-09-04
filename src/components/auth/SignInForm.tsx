@@ -33,7 +33,7 @@ export default function SignInForm() {
       window.localStorage.setItem('emailForSignIn', email);
       setMessage('Проверьте свою почту! Мы отправили вам ссылку для входа.');
       
-    } catch (err) {
+    } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
