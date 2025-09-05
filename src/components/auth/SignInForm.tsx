@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 export default function SignInForm() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setMessage('');
-    setError('');
+    setMessage("");
+    setError("");
 
     try {
-      const res = await fetch('/api/auth/signin', {
-        method: 'POST',
+      const res = await fetch("/api/auth/signin", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email }),
       });
@@ -26,18 +26,17 @@ export default function SignInForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || 'Something went wrong');
+        throw new Error(data.message || "Something went wrong");
       }
 
       // Save email to localStorage
-      window.localStorage.setItem('emailForSignIn', email);
-      setMessage('Check your email! We have sent you a sign-in link.');
-      
+      window.localStorage.setItem("emailForSignIn", email);
+      setMessage("Check your email! We have sent you a sign-in link.");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError('An unknown error occurred.');
+        setError("An unknown error occurred.");
       }
     } finally {
       setLoading(false);
@@ -45,11 +44,16 @@ export default function SignInForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10">
-      <h1 className="text-2xl font-bold text-center mb-6">Sign in to continue</h1>
+    <div className="w-full max-w-md mx-auto mt-10">
+      <h1 className="text-2xl font-bold text-center mb-6">
+        Sign in to continue
+      </h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700"
+          >
             Email
           </label>
           <input
@@ -67,11 +71,11 @@ export default function SignInForm() {
           disabled={loading}
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
         >
-          {loading ? 'Sending...' : 'Get sign-in link'}
+          {loading ? "Sending..." : "Get sign-in link"}
         </button>
       </form>
       {message && <p className="mt-4 text-center text-green-600">{message}</p>}
       {error && <p className="mt-4 text-center text-red-600">{error}</p>}
     </div>
   );
-} 
+}
