@@ -4,7 +4,7 @@ import { sendSignInLinkToEmail } from 'firebase/auth'; // Import the function to
 import { z } from 'zod';
 
 const signInSchema = z.object({
-  email: z.string().email({ message: 'Invalid email format' }),
+  email: z.email({ message: 'Invalid email format' }),
 });
 
 export async function POST(request: Request) {
