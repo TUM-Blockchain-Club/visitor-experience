@@ -1,0 +1,20 @@
+---
+globs: *.tsx
+description: Radix UI Themes usage, design language, and accessibility
+---
+### UI, Design, and Radix Usage
+
+- **Theme Provider**: Already set in `layout.tsx` via `@radix-ui/themes` `Theme` with accent `violet`, gray `mauve`, radius `small`.
+- **Components**:
+  - Prefer Radix primitives and `@radix-ui/themes` components (`Button`, `Text`, `Card`, `Dialog`) for consistency and accessibility.
+  - Layer Tailwind utilities for layout and quick spacing only. Avoid duplicating Radix tokens.
+- **Accessibility**:
+  - Ensure interactive elements have clear focus states and labels.
+  - Follow WCAG AA contrast; Radix defaults help—do not override token colors with low-contrast values.
+- **Responsiveness**: Use container paddings and responsive stacks (`flex`, `grid`) with sensible gaps.
+- **Typography**: Use the Inter font from `layout.tsx`. Keep headings succinct; avoid more than two sizes per view.
+- **Buttons**: Use Radix `Button` for primary actions. For destructive actions, set intent via class or variant; keep wording concise.
+- **Empty/Loading States**: Provide clear messages as seen in `SignInForm` and dashboard loading states.
+
+References: [src/app/layout.tsx](mdc:src/app/layout.tsx), [src/components/auth/SignInForm.tsx](mdc:src/components/auth/SignInForm.tsx), [src/app/dashboard/page.tsx](mdc:src/app/dashboard/page.tsx)
+

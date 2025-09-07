@@ -1,0 +1,24 @@
+---
+globs: src/app/api/**/route.ts
+description: API route style, validation, responses, and error handling
+---
+### API Style Guide
+
+- **Route Handlers**: Export `GET/POST/DELETE` functions from `route.ts` in App Router.
+
+- **Validation**: Use `zod` for body schemas; return `400` with `{ message }` for validation failures.
+
+- **Auth**:
+  - Use `cookies()` to read `session` cookie.
+  - Verify via Firebase Admin `verifySessionCookie`. Return `401` with `{ message }` on failure.
+
+- **Errors**: Catch unexpected errors; log server-side; return `500` with `{ message: 'Internal server error' }`.
+
+- **Responses**:
+  - JSON: `NextResponse.json({ ... }, { status })`.
+  - ICS: `new Response(value, { headers: { 'Content-Type': 'text/calendar; charset=utf-8', 'Content-Disposition': 'attachment; filename="calendar.ics"' } })`.
+
+- **Performance**: Limit Firestore reads; use `limit(1)` when looking up by unique keys.
+
+References: [src/app/api/auth/session/route.ts](mdc:src/app/api/auth/session/route.ts), [src/app/api/calendar/save/route.ts](mdc:src/app/api/calendar/save/route.ts), [src/app/api/calendar/[calendarId]/route.ts](mdc:src/app/api/calendar/[calendarId]/route.ts)
+

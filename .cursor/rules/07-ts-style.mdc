@@ -1,0 +1,26 @@
+---
+globs: *.ts,*.tsx
+description: TypeScript style, naming, and code quality expectations
+---
+### TypeScript Code Style
+
+- **Strictness**: `strict` is enabled. Do not use `any`. Prefer precise types.
+- **Naming**:
+  - Functions: verbs or verb phrases.
+  - Variables: meaningful nouns; avoid abbreviations.
+  - Avoid 1–2 character identifiers.
+- **Control Flow**:
+  - Use guard clauses to reduce nesting.
+  - Handle error paths first.
+  - Avoid `try/catch` without meaningful handling.
+- **Exports**: Explicitly type exported function signatures.
+- **Imports**: Use `@/` alias per `tsconfig.json`.
+- **Formatting**:
+  - Keep lines readable; avoid long chained one-liners.
+  - Avoid unrelated reformatting.
+- **React**:
+  - Prefer Server Components by default; mark `'use client'` only when needed.
+  - Keep components focused; extract helpers for formatting (e.g., date/time).
+
+See examples in: [src/app/dashboard/page.tsx](mdc:src/app/dashboard/page.tsx), [src/app/api/calendar/[calendarId]/route.ts](mdc:src/app/api/calendar/[calendarId]/route.ts)
+

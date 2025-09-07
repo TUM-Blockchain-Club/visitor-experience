@@ -1,0 +1,27 @@
+---
+globs: *.ts,*.tsx
+description: Next.js App Router, API routes, middleware, and client/server component patterns
+---
+### Next.js Conventions
+
+- **App Router**: Use `src/app` with file-based routing.
+  - Layout: `src/app/layout.tsx` must wrap children with Radix `Theme` and `AuthProvider`.
+  - Pages are Server Components by default; add `'use client'` for interactive components.
+
+- **Client vs Server**:
+  - Client components when using hooks (`useState`, `useEffect`), browser APIs, or Firebase client auth.
+  - Server Route Handlers for API endpoints under `src/app/api/*/route.ts`.
+
+- **Middleware**: `src/middleware.ts` guards `\u002Fdashboard` via session cookies. Keep logic minimal and fast.
+
+- **API Design**:
+  - Validate bodies with `zod`.
+  - Return JSON errors `{ message }` with appropriate status codes.
+  - For ICS feeds, return `text/calendar` with `Content-Disposition` attachment.
+
+- **Navigation**: Use `next/navigation` in Client Components.
+
+- **Path Aliases**: Prefer `@/` imports per `tsconfig.json` paths.
+
+Key references: [src/app/layout.tsx](mdc:src/app/layout.tsx), [src/app/page.tsx](mdc:src/app/page.tsx), [src/middleware.ts](mdc:src/middleware.ts), [src/app/api/calendar/[calendarId]/route.ts](mdc:src/app/api/calendar/[calendarId]/route.ts)
+

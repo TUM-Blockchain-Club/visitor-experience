@@ -1,0 +1,23 @@
+---
+description: Calendar bookmarking, saving selections, and ICS feed generation
+globs: *.ts,*.tsx
+---
+### Calendar – Selections and ICS
+
+- **Selecting events**: Users toggle events on `\u002Fdashboard`. Selected IDs are stored in component state until saved.
+
+- **Save action**: POST `\u002Fapi\u002Fcalendar\u002Fsave` with `{ selectedEventIds: string[] }`.
+  - Requires session cookie. Verifies via Admin SDK.
+  - Creates/merges a `user_selections` doc keyed by userId, with a persistent `calendarId` (UUID).
+
+- **Personal feed**: GET `\u002Fapi\u002Fcalendar\u002F[calendarId]` returns an ICS file including all selected events.
+  - Content-Type `text/calendar; charset=utf-8` and attachment filename `calendar.ics`.
+  - Empty selections return a minimal but valid VCALENDAR.
+  - Times converted to arrays in UTC when creating events.
+
+- **Data source**: `MOCK_EVENTS` for now; replace with real data when available.
+
+- **Subscription UX**: After save, show the constructed URL and prompt users to subscribe in their calendar app.
+
+Key files: [src/app/dashboard/page.tsx](mdc:src/app/dashboard/page.tsx), [src/app/api/calendar/save/route.ts](mdc:src/app/api/calendar/save/route.ts), [src/app/api/calendar/[calendarId]/route.ts](mdc:src/app/api/calendar/[calendarId]/route.ts), [src/lib/mockEvents.ts](mdc:src/lib/mockEvents.ts)
+

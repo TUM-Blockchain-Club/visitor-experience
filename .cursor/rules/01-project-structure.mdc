@@ -1,0 +1,44 @@
+---
+alwaysApply: true
+---
+### Visitor Experience App – Project Structure
+
+- **Framework**: Next.js App Router with TypeScript; UI via Radix UI Themes; Tailwind v4 for utility styles.
+- **Auth**: Firebase Email Link; client SDK for link, Admin SDK for sessions/cookies.
+- **Calendar**: User-specific ICS feed generated server-side from selections.
+
+Key entry points and directories:
+
+- `src/app/layout.tsx`: Root layout, wraps children with Radix `Theme` and `AuthProvider`.
+- `src/app/page.tsx`: Public home with `SignInForm`. Redirects authenticated users to `\u002Fdashboard`.
+- `src/app/finish-signin/page.tsx`: Completes Email Link sign-in via Firebase.
+- `src/app/dashboard/page.tsx`: Event list, selection, and actions to save and receive personal calendar URL.
+- `src/middleware.ts`: Route protection for `\u002Fdashboard` via session cookie.
+
+API routes:
+
+- `src/app/api/auth/signin/route.ts`: POST sends email sign-in link.
+- `src/app/api/auth/session/route.ts`: POST creates httpOnly session cookie from ID token; DELETE clears it.
+- `src/app/api/calendar/save/route.ts`: POST saves selected event IDs, assigns persistent `calendarId`.
+- `src/app/api/calendar/[calendarId]/route.ts`: GET serves an ICS payload for a user’s selections.
+
+Firebase:
+
+- `src/lib/firebase/client.ts` and `src/lib/firebase/admin.ts`: Client and Admin SDK initialization.
+
+Data and utilities:
+
+- `src/lib/mockEvents.ts`: Source of conference events displayed in the dashboard.
+
+Path aliases:
+
+- `tsconfig.json` sets `@/*` to `src/*`. Prefer `@/` imports throughout.
+
+Design baseline:
+
+- Professional, minimal, accessible. Radix Theme accent `violet`, gray `mauve`, small radius. Tailwind utilities layered on top.
+
+Getting started scripts: see `package.json` (`dev`, `build`, `start`).
+
+Relevant files referenced above: [src/app/layout.tsx](mdc:src/app/layout.tsx), [src/app/page.tsx](mdc:src/app/page.tsx), [src/app/finish-signin/page.tsx](mdc:src/app/finish-signin/page.tsx), [src/app/dashboard/page.tsx](mdc:src/app/dashboard/page.tsx), [src/app/api/auth/signin/route.ts](mdc:src/app/api/auth/signin/route.ts), [src/app/api/auth/session/route.ts](mdc:src/app/api/auth/session/route.ts), [src/app/api/calendar/save/route.ts](mdc:src/app/api/calendar/save/route.ts), [src/app/api/calendar/[calendarId]/route.ts](mdc:src/app/api/calendar/[calendarId]/route.ts), [src/lib/mockEvents.ts](mdc:src/lib/mockEvents.ts)
+

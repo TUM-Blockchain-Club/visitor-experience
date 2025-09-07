@@ -1,0 +1,18 @@
+---
+alwaysApply: true
+description: Security, privacy, and data handling principles for the Visitor Experience app
+---
+### Security & Privacy Guidelines
+
+- **Authentication**: Use Firebase Email Link. Never expose Admin credentials to the client.
+- **Sessions**: Store only httpOnly session cookies. Mark `secure` in production.
+- **PII**: Treat emails and calendar selections as personal data. Log minimal info; never log tokens.
+- **Validation**: Validate all inputs with `zod`. Fail closed with clear `{ message }` responses.
+- **Authorization**: Scope reads/writes by verified user ID; do not trust client-provided IDs.
+- **ICS Feeds**: `calendarId` must be non-guessable (UUID). Do not leak user IDs via the feed URL or content beyond event data.
+- **Error Handling**: Return generic messages on 500s. Keep detailed errors server-side only.
+- **Secrets**: Load Firebase keys via environment. Do not commit secrets.
+- **Rate Limiting**: Consider basic abuse protections on email link endpoints.
+
+Key files: [src/app/api/auth/session/route.ts](mdc:src/app/api/auth/session/route.ts), [src/app/api/calendar/save/route.ts](mdc:src/app/api/calendar/save/route.ts), [src/app/api/calendar/[calendarId]/route.ts](mdc:src/app/api/calendar/[calendarId]/route.ts)
+

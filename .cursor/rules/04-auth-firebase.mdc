@@ -1,0 +1,27 @@
+---
+description: Firebase Email Link authentication pattern and session cookie management
+globs: *.ts,*.tsx
+---
+### Authentication – Firebase Email Link
+
+- **Flow**:
+  1. User submits email in `SignInForm` → POST to `/api/auth/signin`.
+  2. Server sends sign-in link using Firebase Client SDK.
+  3. Email link redirects to `\u002Ffinish-signin` which calls `signInWithEmailLink`.
+  4. `AuthProvider` listens to auth state, exchanges ID token for httpOnly session cookie via `/api/auth/session`.
+  5. `middleware.ts` protects `\u002Fdashboard` using the session cookie.
+
+- **Client storage**: Temporarily persist `emailForSignIn` in `localStorage` to complete the link flow; clear it after success.
+
+- **Sessions**:
+  - Use Admin SDK to create a session cookie valid up to 14 days.
+  - Set `httpOnly`, `secure` in production, `path=/`.
+  - On sign-out, DELETE `/api/auth/session` to clear cookie and rely on Firebase `signOut`.
+
+- **Security**:
+  - Validate emails with `zod` on the server.
+  - Avoid exposing tokens to the client beyond Firebase SDK defaults.
+  - Consider server-set cookie for the email hint in future improvements.
+
+Key files: [src/components/auth/SignInForm.tsx](mdc:src/components/auth/SignInForm.tsx), [src/app/api/auth/signin/route.ts](mdc:src/app/api/auth/signin/route.ts), [src/app/finish-signin/page.tsx](mdc:src/app/finish-signin/page.tsx), [src/components/auth/AuthProvider.tsx](mdc:src/components/auth/AuthProvider.tsx), [src/app/api/auth/session/route.ts](mdc:src/app/api/auth/session/route.ts), [src/middleware.ts](mdc:src/middleware.ts)
+
