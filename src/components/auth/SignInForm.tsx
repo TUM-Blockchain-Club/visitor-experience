@@ -1,6 +1,8 @@
 "use client";
 
+import { Box, Button, Card, Flex, Heading, TextField } from "@radix-ui/themes";
 import { useState } from "react";
+import { Text } from "@radix-ui/themes";
 
 export default function SignInForm() {
   const [email, setEmail] = useState("");
@@ -44,38 +46,42 @@ export default function SignInForm() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto mt-10">
-      <h1 className="text-2xl font-bold text-center mb-6">
-        Sign in to continue
-      </h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="your.email@example.com"
-            required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-        >
-          {loading ? "Sending..." : "Get sign-in link"}
-        </button>
-      </form>
-      {message && <p className="mt-4 text-center text-green-600">{message}</p>}
-      {error && <p className="mt-4 text-center text-red-600">{error}</p>}
-    </div>
+    <Box>
+      <Card size="3">
+        <Flex direction="column" gap="4" width="400px">
+          <Heading className="text-center" size="6">
+            Sign in to continue
+          </Heading>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Flex direction="column" gap="4">
+              <Flex direction="column" gap="2">
+                <Text as="label" htmlFor="email">
+                  Email
+                </Text>
+                <TextField.Root
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setEmail(e.target.value)
+                  }
+                  placeholder="your.email@example.com"
+                  required
+                />
+              </Flex>
+              <Button type="submit" disabled={loading}>
+                {loading ? "Sending..." : "Get sign-in link"}
+              </Button>
+            </Flex>
+          </form>
+          {message && (
+            <Text className="mt-4 text-center text-green-600">{message}</Text>
+          )}
+          {error && (
+            <Text className="mt-4 text-center text-red-600">{error}</Text>
+          )}
+        </Flex>
+      </Card>
+    </Box>
   );
 }
