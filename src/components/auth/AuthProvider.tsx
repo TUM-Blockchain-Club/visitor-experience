@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect, createContext, useContext } from 'react';
-import type { User } from 'firebase/auth';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/lib/firebase/client';
+import { useState, useEffect, createContext, useContext } from "react";
+import type { User } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase/client";
 
 export const AuthContext = createContext<{ user: User | null }>({ user: null });
 
@@ -20,16 +20,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // User is signed in. Get their ID token.
         const token = await user.getIdToken();
         // Send the token to our API to create a session
-        await fetch('/api/auth/session', {
-          method: 'POST',
+        await fetch("/api/auth/session", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ token }),
         });
       } else {
         // User is signed out. Delete the session cookie.
-        await fetch('/api/auth/session', { method: 'DELETE' });
+        await fetch("/api/auth/session", { method: "DELETE" });
       }
     });
 
@@ -43,4 +43,4 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext); 
+export const useAuth = () => useContext(AuthContext);
