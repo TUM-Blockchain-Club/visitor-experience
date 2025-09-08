@@ -5,6 +5,8 @@ import { FirestoreAdapter } from "@auth/firebase-adapter"
 import { createTransport } from "nodemailer"
 import { JWT } from "google-auth-library"
 import { createCertCredential } from "@/lib/firebase/admin"
+import { adminDb } from "@/lib/firebase/admin"
+import { v4 as uuidv4 } from "uuid"
 
 const text = ({ url, host }: { url: string; host: string }) => {
   return `Sign in to ${host}\n${url}\n\n`
@@ -68,5 +70,45 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   }),
   pages: {
     signIn: "/",
+  },
+  callbacks: {
+    async session({ session, user }) {
+      if (session?.user && user?.id) {
+        // Expose user.id to session for server-side authorization (database strategy)
+        ;(session.user as typeof session.user & { id?: string }).id = user.id
+      }
+      return session
+    },
+  },
+  events: {
+    // Run once when Auth.js creates a new user record
+    async createUser({ user }) {
+      try {
+        const ownerUserId = user.id
+        if (!ownerUserId) return
+
+        // If a calendar already exists for this user, bail
+        const existing = await adminDb
+          .collection('user_selections')
+          .where('ownerUserId', '==', ownerUserId)
+          .limit(1)
+          .get()
+
+        if (!existing.empty) {
+          console.log('Calendar already exists for user', ownerUserId)
+          return
+        }
+
+        const calendarId = uuidv4()
+        console.log('Creating calendar for user', ownerUserId, 'with id', calendarId)
+        await adminDb.collection('user_selections').doc(calendarId).set({
+          calendarId,
+          ownerUserId,
+          selectedEventIds: [],
+        })
+      } catch (error) {
+        console.error('Auth.js createUser event failed to create calendar', error)
+      }
+    },
   },
 })
