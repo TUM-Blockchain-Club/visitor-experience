@@ -23,7 +23,7 @@ export const SignInForm = () => {
   }, []);
 
   return (
-    <Box className="w-full">
+    <Flex className="w-full" justify="center" align="center">
       <Card size="3" className="w-full max-w-md">
         <Flex direction="column" gap="4" className="w-full">
           <Heading className="text-center" size="6">
@@ -58,6 +58,6 @@ export const SignInForm = () => {
           </form>
         </Flex>
       </Card>
-    </Box>
+    </Flex>
   );
 };

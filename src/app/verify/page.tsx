@@ -10,7 +10,7 @@ export default function VerifyPage({
 
   return (
     <main className="flex min-h-screen w-full flex-col items-center justify-center px-4 py-8 sm:px-8 md:px-24">
-      <Box className="w-full">
+      <Flex className="w-full" justify="center" align="center">
         <Card size="3" className="w-full max-w-md">
           <Flex direction="column" gap="4" className="w-full">
             <Heading className="text-center" size="6">
@@ -38,7 +38,7 @@ export default function VerifyPage({
             </Flex>
           </Flex>
         </Card>
-      </Box>
+      </Flex>
     </main>
   );
 }
