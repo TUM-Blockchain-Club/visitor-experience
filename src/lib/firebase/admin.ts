@@ -1,16 +1,21 @@
 import * as admin from 'firebase-admin';
 import * as path from 'path';
 import * as fs from 'fs';
+import { cert, type Credential } from 'firebase-admin/app';
+
+export const createCertCredential = () : Credential => {
+  return cert({
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
+  })
+}
 
 if (!admin.apps.length) {
   // For firebase
   if (process.env.FIREBASE_PRIVATE_KEY) {
     admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY,
-      }),
+      credential: createCertCredential(),
     });
   } else {
     // For local

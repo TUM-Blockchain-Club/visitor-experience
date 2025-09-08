@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
-import { AuthProvider } from "@/components/auth/AuthProvider";
 import { Theme } from "@radix-ui/themes";
+
+import "./globals.css";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Theme accentColor="violet" grayColor="mauve" radius="small">
-          <AuthProvider>{children}</AuthProvider>
+          {children}
         </Theme>
       </body>
     </html>

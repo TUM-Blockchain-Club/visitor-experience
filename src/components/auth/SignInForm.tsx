@@ -1,49 +1,26 @@
 "use client";
 
-import { Box, Button, Card, Flex, Heading, TextField } from "@radix-ui/themes";
-import { useState } from "react";
-import { Text } from "@radix-ui/themes";
+import {
+  Box,
+  Button,
+  Card,
+  Flex,
+  Heading,
+  TextField,
+  Text,
+} from "@radix-ui/themes";
+import { useState, useEffect } from "react";
+import { getCsrfToken } from "next-auth/react";
 
-export default function SignInForm() {
+export const SignInForm = () => {
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [csrfToken, setCsrfToken] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
-    setError("");
-
-    try {
-      const res = await fetch("/api/auth/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Something went wrong");
-      }
-
-      // Save email to localStorage
-      window.localStorage.setItem("emailForSignIn", email);
-      setMessage("Check your email! We have sent you a sign-in link.");
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("An unknown error occurred.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    getCsrfToken().then((token) => {
+      setCsrfToken(token);
+    });
+  }, []);
 
   return (
     <Box>
@@ -52,7 +29,12 @@ export default function SignInForm() {
           <Heading className="text-center" size="6">
             Sign in to continue
           </Heading>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form
+            className="space-y-4"
+            action="/api/auth/signin/nodemailer"
+            method="POST"
+          >
+            <input name="csrfToken" type="hidden" value={csrfToken} />
             <Flex direction="column" gap="4">
               <Flex direction="column" gap="2">
                 <Text as="label" htmlFor="email">
@@ -61,27 +43,18 @@ export default function SignInForm() {
                 <TextField.Root
                   id="email"
                   type="email"
-                  value={email}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setEmail(e.target.value)
-                  }
                   placeholder="your.email@example.com"
                   required
+                  value={email}
+                  name="email"
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </Flex>
-              <Button type="submit" disabled={loading}>
-                {loading ? "Sending..." : "Get sign-in link"}
-              </Button>
+              <Button type="submit">Get Sign In Link</Button>
             </Flex>
           </form>
-          {message && (
-            <Text className="mt-4 text-center text-green-600">{message}</Text>
-          )}
-          {error && (
-            <Text className="mt-4 text-center text-red-600">{error}</Text>
-          )}
         </Flex>
       </Card>
     </Box>
   );
-}
+};
