@@ -70,6 +70,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   }),
   pages: {
     signIn: "/",
+    verifyRequest: "/verify",
   },
   callbacks: {
     async session({ session, user }) {

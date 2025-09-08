@@ -12,16 +12,12 @@ export async function GET(
   try {
     const { calendarId } = await params;
 
-    const querySnapshot = await adminDb.collection('user_selections')
-      .where('calendarId', '==', calendarId)
-      .limit(1)
-      .get();
-
-    if (querySnapshot.empty) {
+    const docSnap = await adminDb.collection('user_selections').doc(calendarId).get();
+    if (!docSnap.exists) {
       return NextResponse.json({ message: 'Calendar not found.' }, { status: 404 });
     }
 
-    const userSelection = querySnapshot.docs[0].data();
+    const userSelection = docSnap.data()!;
     const selectedEventIds = userSelection.selectedEventIds as string[];
 
     const selectedEvents = MOCK_EVENTS.filter(event => selectedEventIds.includes(event.id));
