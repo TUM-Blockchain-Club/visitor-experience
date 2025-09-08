@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { adminAuth, adminDb } from '@/lib/firebase/admin';
+import { adminDb } from '@/lib/firebase/admin';
 import { z } from 'zod';
-import { cookies } from 'next/headers';
 import { v4 as uuidv4 } from 'uuid';
+import { auth } from '@/auth';
 
 const saveSchema = z.object({
   selectedEventIds: z.array(z.string()).min(1, { message: 'At least one event must be selected.' }),
@@ -10,21 +10,12 @@ const saveSchema = z.object({
 
 export async function POST(request: Request) {
   try {
-    // 1. Check user authentication
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get('session')?.value;
-    if (!sessionCookie) {
+    // 1. Check user authentication via Auth.js
+    const session = await auth();
+    if (!session?.user?.email) {
       return NextResponse.json({ message: 'Unauthorized.' }, { status: 401 });
     }
-
-    let decodedToken;
-    try {
-      decodedToken = await adminAuth.verifySessionCookie(sessionCookie, true);
-    } catch {
-      return NextResponse.json({ message: 'Invalid session.' }, { status: 401 });
-    }
-
-    const userId = decodedToken.uid;
+    const userId = session.user.email;
 
     // 2. Validate request body
     const body = await request.json();

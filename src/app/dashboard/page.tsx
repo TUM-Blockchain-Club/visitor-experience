@@ -1,13 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { MOCK_EVENTS, ConferenceEvent } from "@/lib/mockEvents";
+import {
+  Box,
+  Button,
+  Card,
+  Checkbox,
+  Flex,
+  Heading,
+  Text,
+  TextField,
+} from "@radix-ui/themes";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 function formatEventTime(startTime: string, endTime: string) {
   const start = new Date(startTime);
   const end = new Date(endTime);
-  // Example format: 14:00 - 16:00
   return `${start.toLocaleTimeString("en-GB", {
     hour: "2-digit",
     minute: "2-digit",
@@ -27,51 +37,62 @@ function EventCard({
   isSelected: boolean;
 }) {
   return (
-    <div
-      className={`p-4 border rounded-lg ${
-        isSelected ? "bg-blue-100 border-blue-400" : "bg-white"
-      }`}
-    >
-      <div className="flex justify-between items-start">
-        <div>
-          <h3 className="font-bold text-lg">{event.title}</h3>
-          <p className="text-sm text-gray-600">
+    <Card>
+      <Flex align="start" justify="between" gap="4">
+        <Box>
+          <Heading as="h3" size="3">
+            {event.title}
+          </Heading>
+          <Text size="2" color="gray">
             {formatEventTime(event.startTime, event.endTime)}
-          </p>
-          <p className="text-gray-800 mt-2">{event.description}</p>
-        </div>
-        <input
-          type="checkbox"
+          </Text>
+          <Box mt="2">
+            <Text>{event.description}</Text>
+          </Box>
+        </Box>
+        <Checkbox
           checked={isSelected}
-          onChange={() => onToggle(event.id)}
-          className="ml-4 h-6 w-6"
+          onCheckedChange={() => onToggle(event.id)}
+          size="3"
         />
-      </div>
-    </div>
+      </Flex>
+    </Card>
   );
 }
 
 export default function DashboardPage() {
+  const { data: session, status } = useSession();
   const router = useRouter();
+
   const [selectedEvents, setSelectedEvents] = useState<Set<string>>(new Set());
   const [calendarUrl, setCalendarUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSignOut = async () => {
-    router.push("/");
-  };
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace("/");
+    }
+  }, [status, router]);
+
+  if (status !== "authenticated") {
+    return (
+      <Box p="4" style={{ maxWidth: 960, margin: "0 auto" }}>
+        <Text>Loading...</Text>
+      </Box>
+    );
+  }
 
   const handleToggleEvent = (eventId: string) => {
-    setCalendarUrl(null); // Reset link on selection change
-    setSelectedEvents((prev) => {
-      const newSelection = new Set(prev);
-      if (newSelection.has(eventId)) {
-        newSelection.delete(eventId);
+    setCalendarUrl(null);
+    setSelectedEvents((previousSelected) => {
+      const updated = new Set(previousSelected);
+      if (updated.has(eventId)) {
+        updated.delete(eventId);
       } else {
-        newSelection.add(eventId);
+        updated.add(eventId);
       }
-      return newSelection;
+      return updated;
     });
   };
 
@@ -81,16 +102,16 @@ export default function DashboardPage() {
     setCalendarUrl(null);
 
     try {
-      const res = await fetch("/api/calendar/save", {
+      const response = await fetch("/api/calendar/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ selectedEventIds: Array.from(selectedEvents) }),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to save calendar.");
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.message || "Failed to save calendar.");
 
-      // Form the new, correct link
       const url = `${window.location.origin}/api/calendar/${data.calendarId}`;
       setCalendarUrl(url);
     } catch (err: unknown) {
@@ -105,51 +126,57 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <header className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">Conference Program</h1>
-          <p className="text-gray-600">Signed in as:</p>
-        </div>
-        <div>
-          <button
+    <Box p="4" style={{ maxWidth: 960, margin: "0 auto" }}>
+      <Flex align="center" justify="between" mb="6">
+        <Box>
+          <Heading size="6">Conference Program</Heading>
+          <Text color="gray" size="2">
+            Signed in as: {session?.user?.email ?? ""}
+          </Text>
+        </Box>
+        <Flex gap="3">
+          <Button
             onClick={handleSaveCalendar}
             disabled={loading || selectedEvents.size === 0}
-            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 mr-4 disabled:opacity-50"
           >
             {loading ? "Saving..." : "Get Calendar Link"}
-          </button>
-          <button
-            onClick={handleSignOut}
-            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+          </Button>
+          <Button
+            color="red"
+            variant="solid"
+            onClick={() => signOut({ callbackUrl: "/" })}
           >
             Sign Out
-          </button>
-        </div>
-      </header>
+          </Button>
+        </Flex>
+      </Flex>
 
       {error && (
-        <p className="text-red-500 bg-red-100 p-3 rounded-md my-4">{error}</p>
+        <Box mb="4">
+          <Text color="red">{error}</Text>
+        </Box>
       )}
 
       {calendarUrl && (
-        <div className="my-4 p-4 bg-blue-100 border border-blue-300 rounded-md">
-          <h3 className="font-bold">Your personal calendar link:</h3>
-          <p className="text-sm text-gray-700">
-            Copy this link and add it to your calendar application (Google
-            Calendar, Apple Calendar, etc.)
-          </p>
-          <input
-            type="text"
-            readOnly
-            value={calendarUrl}
-            className="mt-2 w-full p-2 border rounded-md bg-gray-50"
-            onFocus={(e) => e.target.select()}
-          />
-        </div>
+        <Card mb="4">
+          <Flex direction="column" gap="2">
+            <Heading as="h3" size="3">
+              Your personal calendar link
+            </Heading>
+            <Text size="2" color="gray">
+              Copy this link and add it to your calendar application (Google
+              Calendar, Apple Calendar, etc.)
+            </Text>
+            <TextField.Root
+              readOnly
+              value={calendarUrl}
+              onFocus={(e) => e.currentTarget.select()}
+            />
+          </Flex>
+        </Card>
       )}
 
-      <div className="space-y-4">
+      <Flex direction="column" gap="3">
         {MOCK_EVENTS.map((event) => (
           <EventCard
             key={event.id}
@@ -158,7 +185,7 @@ export default function DashboardPage() {
             onToggle={handleToggleEvent}
           />
         ))}
-      </div>
-    </div>
+      </Flex>
+    </Box>
   );
 }

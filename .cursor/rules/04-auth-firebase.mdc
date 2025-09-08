@@ -1,27 +1,34 @@
 ---
-description: Firebase Email Link authentication pattern and session cookie management
+description: Auth.js (NextAuth) Email Provider with Nodemailer (Gmail) and session usage
 globs: *.ts,*.tsx
 ---
-### Authentication – Firebase Email Link
+### Authentication – Auth.js Email (Nodemailer via Gmail)
 
 - **Flow**:
-  1. User submits email in `SignInForm` → POST to `/api/auth/signin`.
-  2. Server sends sign-in link using Firebase Client SDK.
-  3. Email link redirects to `\u002Ffinish-signin` which calls `signInWithEmailLink`.
-  4. `AuthProvider` listens to auth state, exchanges ID token for httpOnly session cookie via `/api/auth/session`.
-  5. `middleware.ts` protects `\u002Fdashboard` using the session cookie.
+  1. User enters email in `SignInForm` → POSTs form with `csrfToken` to `/api/auth/signin/nodemailer`.
+  2. Auth.js sends a magic link via Gmail using Nodemailer.
+  3. User clicks the link; Auth.js verifies the token and creates a session.
+  4. Server Components and API routes access the session via `auth()` from `@/auth`.
+  5. Sign-out via `signOut()` (server/client) which clears the session cookie.
 
-- **Client storage**: Temporarily persist `emailForSignIn` in `localStorage` to complete the link flow; clear it after success.
+- **Client form**:
+  - Use `getCsrfToken()` from `next-auth/react` and include it as a hidden `csrfToken` field.
+  - No `localStorage` is required.
 
 - **Sessions**:
-  - Use Admin SDK to create a session cookie valid up to 14 days.
-  - Set `httpOnly`, `secure` in production, `path=/`.
-  - On sign-out, DELETE `/api/auth/session` to clear cookie and rely on Firebase `signOut`.
+  - Managed by Auth.js; session is available on the server via `await auth()`.
+  - Cookies are `httpOnly` and should be `secure` in production (handled by Auth.js).
+  - `pages.signIn` is `/`, so unauthenticated users land on the home page with the form.
 
 - **Security**:
-  - Validate emails with `zod` on the server.
-  - Avoid exposing tokens to the client beyond Firebase SDK defaults.
-  - Consider server-set cookie for the email hint in future improvements.
+  - Keep Gmail OAuth2 credentials in environment variables; never expose or log tokens.
+  - Consider basic rate limiting on the sign-in endpoint to prevent abuse.
+  - If adding custom validations, validate and normalize emails on the server.
 
-Key files: [src/components/auth/SignInForm.tsx](mdc:src/components/auth/SignInForm.tsx), [src/app/api/auth/signin/route.ts](mdc:src/app/api/auth/signin/route.ts), [src/app/finish-signin/page.tsx](mdc:src/app/finish-signin/page.tsx), [src/components/auth/AuthProvider.tsx](mdc:src/components/auth/AuthProvider.tsx), [src/app/api/auth/session/route.ts](mdc:src/app/api/auth/session/route.ts), [src/middleware.ts](mdc:src/middleware.ts)
+- **Implementation notes**:
+  - Email provider id is `nodemailer`, hence the endpoint `\u002Fapi\u002Fauth\u002Fsignin\u002Fnodemailer`.
+  - `FirestoreAdapter` persists verification tokens/users for the Email provider.
+  - Prefer `auth()` in Server Components and Route Handlers to authorize requests.
+
+Key files: [src/auth.ts](mdc:src/auth.ts), [src/app/api/auth/[...nextauth]/route.ts](mdc:src/app/api/auth/[...nextauth]/route.ts), [src/components/auth/SignInForm.tsx](mdc:src/components/auth/SignInForm.tsx), [src/app/page.tsx](mdc:src/app/page.tsx)
 
