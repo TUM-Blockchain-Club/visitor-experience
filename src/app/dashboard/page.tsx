@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import type { FocusEvent } from "react";
 import { CheckIcon, CopyIcon } from "@radix-ui/react-icons";
+import Search from "@/components/ui/Search";
 
 function formatEventTime(startTime: string, endTime: string) {
   const start = new Date(startTime);
@@ -65,11 +66,30 @@ function EventCard({
   );
 }
 
+type TextSelector<T> = (item: T) => string | null | undefined;
+
+function filterItemsByQuery<T>(
+  items: readonly T[],
+  query: string,
+  selectors: readonly TextSelector<T>[]
+): T[] {
+  const normalizedQuery = query.trim().toLowerCase();
+  if (normalizedQuery.length === 0) return items.slice();
+  return items.filter((item) =>
+    selectors.some((selectText) => {
+      const text = selectText(item);
+      if (!text) return false;
+      return text.toLowerCase().includes(normalizedQuery);
+    })
+  );
+}
+
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
   const [selectedEvents, setSelectedEvents] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
   const hasHydratedRef = useRef(false);
@@ -243,6 +263,15 @@ export default function DashboardPage() {
   const showSkeleton =
     status === "authenticated" && (!hasHydratedRef.current || isLoading);
 
+  const filteredEvents = filterItemsByQuery<ConferenceEvent>(
+    MOCK_EVENTS,
+    searchQuery,
+    [
+      (e) => e.title,
+      // Add more selectors in the future, e.g., (e) => e.description
+    ]
+  );
+
   return (
     <Box p="4" style={{ maxWidth: 960, margin: "0 auto" }}>
       <Flex align="center" justify="between" mb="6">
@@ -307,6 +336,15 @@ export default function DashboardPage() {
         </Flex>
       </Card>
 
+      <Box mb="4">
+        <Search
+          value={searchQuery}
+          onValueChange={setSearchQuery}
+          placeholder="Search events"
+          ariaLabel="Search events"
+        />
+      </Box>
+
       {showSkeleton ? (
         <Flex direction="column" gap="3">
           {MOCK_EVENTS.map((event) => (
@@ -336,7 +374,7 @@ export default function DashboardPage() {
         </Flex>
       ) : (
         <Flex direction="column" gap="3">
-          {MOCK_EVENTS.map((event) => (
+          {filteredEvents.map((event) => (
             <EventCard
               key={event.id}
               event={event}
