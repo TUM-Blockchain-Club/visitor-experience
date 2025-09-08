@@ -12,10 +12,13 @@ import {
   Skeleton,
   Text,
   TextField,
+  IconButton,
 } from "@radix-ui/themes";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
+import type { FocusEvent } from "react";
+import { CheckIcon, CopyIcon } from "@radix-ui/react-icons";
 
 function formatEventTime(startTime: string, endTime: string) {
   const start = new Date(startTime);
@@ -68,6 +71,7 @@ export default function DashboardPage() {
 
   const [selectedEvents, setSelectedEvents] = useState<Set<string>>(new Set());
   const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
   const hasHydratedRef = useRef(false);
   const hasAutoCreatedRef = useRef(false);
 
@@ -225,6 +229,17 @@ export default function DashboardPage() {
       }/api/calendar/${calendarId}`
     : "";
 
+  const handleCopyLink = async () => {
+    if (!calendarLink) return;
+    try {
+      await navigator.clipboard.writeText(calendarLink);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // Best-effort copy; ignore errors
+    }
+  };
+
   const showSkeleton =
     status === "authenticated" && (!hasHydratedRef.current || isLoading);
 
@@ -265,10 +280,25 @@ export default function DashboardPage() {
           </Text>
           {calendarId ? (
             <TextField.Root
+              className="flex"
               readOnly
               value={calendarLink}
-              onFocus={(e) => e.currentTarget.select()}
-            />
+              onFocus={(e: FocusEvent<HTMLInputElement>) =>
+                e.currentTarget.select()
+              }
+            >
+              <TextField.Slot side="right" className="shrink">
+                <IconButton
+                  size="1"
+                  aria-label={copied ? "Copied" : "Copy calendar link"}
+                  onClick={handleCopyLink}
+                  type="button"
+                  variant="ghost"
+                >
+                  {copied ? <CheckIcon /> : <CopyIcon />}
+                </IconButton>
+              </TextField.Slot>
+            </TextField.Root>
           ) : (
             <Skeleton>
               <div style={{ height: 36, width: "100%" }} />
