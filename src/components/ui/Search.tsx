@@ -29,9 +29,9 @@ export default function Search({
       onChange={handleChange}
       placeholder={placeholder}
       aria-label={ariaLabel}
-      className={className ?? "flex"}
+      className={className ?? "w-full"}
     >
-      <TextField.Slot side="right" className="shrink">
+      <TextField.Slot side="right" className="shrink-0">
         <MagnifyingGlassIcon aria-hidden width="16" height="16" />
       </TextField.Slot>
     </TextField.Root>

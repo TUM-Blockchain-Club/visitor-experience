@@ -44,7 +44,7 @@ function EventCard({
 }) {
   return (
     <Card>
-      <Flex align="start" justify="between" gap="4">
+      <Flex align="start" justify="between" gap="4" wrap="nowrap">
         <Box>
           <Heading as="h3" size="3">
             {event.title}
@@ -274,7 +274,7 @@ export default function DashboardPage() {
 
   return (
     <Box p="4" style={{ maxWidth: 960, margin: "0 auto" }}>
-      <Flex align="center" justify="between" mb="6">
+      <Flex align="center" justify="between" mb="6" wrap="wrap" gap="3">
         <Box>
           <Heading size="6">Conference Program</Heading>
           <Text color="gray" size="2">
@@ -309,14 +309,14 @@ export default function DashboardPage() {
           </Text>
           {calendarId ? (
             <TextField.Root
-              className="flex"
+              className="w-full"
               readOnly
               value={calendarLink}
               onFocus={(e: FocusEvent<HTMLInputElement>) =>
                 e.currentTarget.select()
               }
             >
-              <TextField.Slot side="right" className="shrink">
+              <TextField.Slot side="right" className="shrink-0">
                 <IconButton
                   size="1"
                   aria-label={copied ? "Copied" : "Copy calendar link"}
@@ -336,7 +336,7 @@ export default function DashboardPage() {
         </Flex>
       </Card>
 
-      <Box mb="4">
+      <Box mb="4" className="w-full">
         <Search
           value={searchQuery}
           onValueChange={setSearchQuery}
@@ -349,7 +349,7 @@ export default function DashboardPage() {
         <Flex direction="column" gap="3">
           {MOCK_EVENTS.map((event) => (
             <Card key={event.id}>
-              <Flex align="start" justify="between" gap="4">
+              <Flex align="start" justify="between" gap="4" wrap="wrap">
                 <Box style={{ width: "100%" }}>
                   <Skeleton>
                     <div style={{ height: 24, width: "60%" }} />

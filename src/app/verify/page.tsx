@@ -9,10 +9,10 @@ export default function VerifyPage({
   const email = searchParams?.email;
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <Box>
-        <Card size="3">
-          <Flex direction="column" gap="4" width="400px">
+    <main className="flex min-h-screen w-full flex-col items-center justify-center px-4 py-8 sm:px-8 md:px-24">
+      <Box className="w-full">
+        <Card size="3" className="w-full max-w-md">
+          <Flex direction="column" gap="4" className="w-full">
             <Heading className="text-center" size="6">
               Check your inbox
             </Heading>

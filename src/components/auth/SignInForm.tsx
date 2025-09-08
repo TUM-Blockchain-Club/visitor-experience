@@ -23,9 +23,9 @@ export const SignInForm = () => {
   }, []);
 
   return (
-    <Box>
-      <Card size="3">
-        <Flex direction="column" gap="4" width="400px">
+    <Box className="w-full">
+      <Card size="3" className="w-full max-w-md">
+        <Flex direction="column" gap="4" className="w-full">
           <Heading className="text-center" size="6">
             Sign in to continue
           </Heading>
@@ -48,9 +48,12 @@ export const SignInForm = () => {
                   value={email}
                   name="email"
                   onChange={(e) => setEmail(e.target.value)}
+                  className="w-full"
                 />
               </Flex>
-              <Button type="submit">Get Sign In Link</Button>
+              <Button type="submit" className="w-full">
+                Get Sign In Link
+              </Button>
             </Flex>
           </form>
         </Flex>
