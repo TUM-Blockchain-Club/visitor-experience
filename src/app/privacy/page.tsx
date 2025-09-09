@@ -16,17 +16,12 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacyPage() {
-  const updatedOn = new Date().toISOString().split("T")[0];
-
   return (
     <Container size="3" px="3" py="3">
       <Section size="3">
         <Heading as="h1" size="8">
           Privacy Policy
         </Heading>
-        <Text as="p" color="gray">
-          Updated: {updatedOn}
-        </Text>
       </Section>
 
       <Section size="1">
