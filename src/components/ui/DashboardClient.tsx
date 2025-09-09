@@ -21,6 +21,27 @@ import Search from "@/components/ui/Search";
 import EventCard from "@/components/ui/EventCard";
 import { Speaker } from "@/lib/model/speaker";
 
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+    dataLayer?: Object[];
+  }
+}
+
+function trackAnalyticsEvent(
+  eventName: string,
+  params: Record<string, unknown>
+): void {
+  if (typeof window === "undefined") return;
+  if (typeof window.gtag === "function") {
+    window.gtag("event", eventName, params);
+    return;
+  }
+  if (Array.isArray(window.dataLayer)) {
+    window.dataLayer.push({ event: eventName, ...params });
+  }
+}
+
 type TextSelector<T> = (item: T) => string | null | undefined;
 
 function filterItemsByQuery<T>(
@@ -134,6 +155,18 @@ export default function DashboardClient({
   }, [mutate, selectedEvents, status, swrData]);
 
   const handleToggleEvent = (eventId: string) => {
+    const isCurrentlySelected = selectedEvents.has(eventId);
+    const sessionItem = sessions.find((s) => s.documentId === eventId);
+    const eventTitle = sessionItem?.title ?? "";
+
+    trackAnalyticsEvent(
+      isCurrentlySelected ? "event_unbookmarked" : "event_bookmarked",
+      {
+        event_id: eventId,
+        event_title: eventTitle,
+      }
+    );
+
     const nextSelected = new Set(selectedEvents);
     if (nextSelected.has(eventId)) {
       nextSelected.delete(eventId);
@@ -286,6 +319,11 @@ export default function DashboardClient({
 
   const filteredEvents = filterItemsByQuery<Session>(sessions, searchQuery, [
     (e) => e.title,
+    (e) => e.description ?? null,
+    (e) => {
+      const names = Object.values(e.speakers ?? {});
+      return names.length > 0 ? names.join(" ") : null;
+    },
   ]);
 
   return (
@@ -360,8 +398,8 @@ export default function DashboardClient({
             <Search
               value={searchQuery}
               onValueChange={setSearchQuery}
-              placeholder="Search events"
-              ariaLabel="Search events"
+              placeholder="Search by title, speaker, or description"
+              ariaLabel="Search by title, speaker, or description"
             />
           </Box>
 

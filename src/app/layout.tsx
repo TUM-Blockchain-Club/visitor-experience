@@ -4,6 +4,8 @@ import { Theme } from "@radix-ui/themes";
 import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 import { Footer } from "@/components/ui/Footer";
+import { GoogleAnalytics } from "@next/third-parties/google";
+import { GAErrorTracker } from "@/components/ui/GAErrorTracker";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +25,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -34,6 +37,9 @@ export default function RootLayout({
             </div>
           </Theme>
         </SessionProvider>
+        {/* Capture client-side errors and send GA4 exception events */}
+        <GAErrorTracker />
+        {GA_ID ? <GoogleAnalytics gaId={GA_ID} /> : null}
       </body>
     </html>
   );
