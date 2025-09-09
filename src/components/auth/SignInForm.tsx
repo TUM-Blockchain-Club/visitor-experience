@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Box,
-  Button,
-  Card,
-  Flex,
-  Heading,
-  TextField,
-  Text,
-} from "@radix-ui/themes";
+import { Button, Card, Flex, Heading, TextField, Text } from "@radix-ui/themes";
 import { useState, useEffect } from "react";
 import { getCsrfToken } from "next-auth/react";
 

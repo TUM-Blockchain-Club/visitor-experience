@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 import Nodemailer from "next-auth/providers/nodemailer"
-import { cert, initializeApp } from "firebase-admin/app"
+// (no-op) removed unused firebase-admin app imports
 import { FirestoreAdapter } from "@auth/firebase-adapter"
 import { createTransport } from "nodemailer"
 import { JWT } from "google-auth-library"
@@ -30,7 +30,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             subject: sendAs,
           })
 
-          const { access_token, expiry_date } = await jwt.authorize()
+          const { access_token } = await jwt.authorize()
           if (!access_token) throw new Error("Failed to mint access token via DWD");
           
           const { identifier, url } = params

@@ -1,4 +1,4 @@
-import { Box, Card, Flex, Heading, Text, Button } from "@radix-ui/themes";
+import { Card, Flex, Heading, Text, Button } from "@radix-ui/themes";
 import Link from "next/link";
 
 export default async function VerifyPage({

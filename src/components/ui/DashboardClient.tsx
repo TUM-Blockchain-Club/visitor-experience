@@ -24,6 +24,7 @@ import { Speaker } from "@/lib/model/speaker";
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
+    // eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
     dataLayer?: Object[];
   }
 }
@@ -271,7 +272,6 @@ export default function DashboardClient({
   const [speakersByName, setSpeakersByName] = useState<Record<string, Speaker>>(
     {}
   );
-  const [loadingSpeakers, setLoadingSpeakers] = useState<boolean>(true);
 
   useEffect(() => {
     if (initialSessions.length > 0) return;
@@ -309,7 +309,7 @@ export default function DashboardClient({
       } catch {
         if (!cancelled) setSpeakersByName({});
       } finally {
-        if (!cancelled) setLoadingSpeakers(false);
+        // no-op
       }
     })();
     return () => {

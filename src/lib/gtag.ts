@@ -2,6 +2,7 @@ type GtagCommand = "config" | "event" | "set" | "js";
 
 declare global {
   interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
     dataLayer?: Object[];
     gtag?: (...args: unknown[]) => void;
   }
