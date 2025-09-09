@@ -16,7 +16,7 @@ const updateSchema = z.object({
 
 // GET /api/calendar
 // Returns the current user's calendar document if it exists (uses ownerUserId index)
-export async function GET(_request: NextRequest) {
+export async function GET(): Promise<NextResponse> {
   try {
     const session = await auth();
     if (!session?.user?.id) {
