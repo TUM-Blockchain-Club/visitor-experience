@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { Theme } from "@radix-ui/themes";
 import { SessionProvider } from "next-auth/react";
 import "./globals.css";
+import { Footer } from "@/components/ui/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,7 +28,10 @@ export default function RootLayout({
       <body className={inter.className}>
         <SessionProvider>
           <Theme accentColor="violet" grayColor="mauve" radius="small">
-            {children}
+            <div className="min-h-dvh flex flex-col">
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
           </Theme>
         </SessionProvider>
       </body>

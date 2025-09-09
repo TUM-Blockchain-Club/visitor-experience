@@ -1,12 +1,12 @@
 import { Box, Card, Flex, Heading, Text, Button } from "@radix-ui/themes";
 import Link from "next/link";
 
-export default function VerifyPage({
+export default async function VerifyPage({
   searchParams,
 }: {
-  searchParams: { email?: string };
+  searchParams: Promise<{ email?: string }>;
 }) {
-  const email = searchParams?.email;
+  const email = (await searchParams)?.email;
 
   return (
     <main className="flex min-h-screen w-full flex-col items-center justify-center px-4 py-8 sm:px-8 md:px-24">

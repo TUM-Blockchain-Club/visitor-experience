@@ -32,8 +32,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           const { access_token, expiry_date } = await jwt.authorize()
           if (!access_token) throw new Error("Failed to mint access token via DWD");
-          console.log("token starts:", access_token.slice(0, 16), "exp:", expiry_date);
-
+          
           const { identifier, url } = params
           const { host } = new URL(url)
 
