@@ -6,8 +6,10 @@ import {
   Heading,
   Spinner,
   Text,
+  Callout,
 } from "@radix-ui/themes";
-import { ConferenceEvent } from "@/lib/mockEvents";
+import { Avatar } from "@radix-ui/themes";
+import { Session } from "@/lib/model/session";
 
 function formatEventTime(startTime: string, endTime: string) {
   const start = new Date(startTime);
@@ -26,11 +28,15 @@ export default function EventCard({
   onToggle,
   isSelected,
   isPending,
+  speakers = [],
+  conflictingTitles = [],
 }: {
-  event: ConferenceEvent;
+  event: Session;
   onToggle: (eventId: string) => void;
   isSelected: boolean;
   isPending: boolean;
+  speakers?: { name: string; photoUrl?: string }[];
+  conflictingTitles?: string[];
 }) {
   return (
     <Card>
@@ -42,9 +48,41 @@ export default function EventCard({
           <Text size="2" color="gray">
             {formatEventTime(event.startTime, event.endTime)}
           </Text>
-          <Box mt="2">
-            <Text>{event.description}</Text>
-          </Box>
+          {speakers.length > 0 && (
+            <Box mt="2">
+              <Flex align="center" gap="3" wrap="wrap">
+                {speakers.map((s) => (
+                  <Flex key={s.name} align="center" gap="2">
+                    <Avatar
+                      size="1"
+                      radius="full"
+                      src={s.photoUrl}
+                      fallback={s.name
+                        .split(" ")
+                        .map((p) => p[0])
+                        .slice(0, 2)
+                        .join("")}
+                    />
+                    <Text size="1">{s.name}</Text>
+                  </Flex>
+                ))}
+              </Flex>
+            </Box>
+          )}
+          {event.description ? (
+            <Box mt="3">
+              <Text>{event.description}</Text>
+            </Box>
+          ) : null}
+          {conflictingTitles.length > 0 ? (
+            <Box mt="1">
+              <Callout.Root color="amber" role="alert" size="1">
+                <Callout.Text size="1">
+                  Overlaps with: {conflictingTitles.join(", ")}
+                </Callout.Text>
+              </Callout.Root>
+            </Box>
+          ) : null}
         </Box>
         {isPending ? (
           <Box
@@ -63,7 +101,7 @@ export default function EventCard({
         ) : (
           <Checkbox
             checked={isSelected}
-            onCheckedChange={() => onToggle(event.id)}
+            onCheckedChange={() => onToggle(event.documentId)}
             size="3"
             disabled={isPending}
           />
