@@ -112,14 +112,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             secure: true,
             auth: { 
               type: "OAuth2", 
-              user: `Visitor Experience @ TUM Blockchain Conference 2025${sendAs}`, 
+              user: sendAs, 
               accessToken: access_token as string, 
             },
           });
 
           const result = await transport.sendMail({
             to: identifier,
-            from: sendAs,
+            from: `Visitor Experience @ TUM Blockchain Conference 2025 <${sendAs}>`,
             subject: `Sign in to ${host}`,
             text: text({ url, host }),
             html: html({ url, host }),
