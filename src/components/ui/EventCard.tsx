@@ -80,8 +80,8 @@ export default function EventCard({
           {conflictingTitles.length > 0 ? (
             <Box mt="1">
               <Callout.Root color="amber" role="alert" size="1">
-                <Callout.Text size="1">Overlaps with:</Callout.Text>
-                <Box mt="1">
+                <Callout.Text size="1">
+                  Overlaps with:
                   <ul className="list-disc list-inside">
                     {conflictingTitles.map((title) => (
                       <Text as="span" size="1" asChild key={title}>
@@ -89,7 +89,7 @@ export default function EventCard({
                       </Text>
                     ))}
                   </ul>
-                </Box>
+                </Callout.Text>
               </Callout.Root>
             </Box>
           ) : null}
