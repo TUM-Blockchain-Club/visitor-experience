@@ -12,7 +12,7 @@ export function Footer() {
             © {currentYear} TUM Blockchain Club
           </Text>
           <Text size="2">
-            Need help? Contact us at{"\u00A0"}
+            For help and feedback, contact us at{"\u00A0"}
             <Link
               href="mailto:it@tum-blockchain.com"
               aria-label="Email it@tum-blockchain.com for inquiries and support"

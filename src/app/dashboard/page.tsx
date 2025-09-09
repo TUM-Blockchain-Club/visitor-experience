@@ -20,51 +20,7 @@ import useSWR from "swr";
 import type { FocusEvent } from "react";
 import { CheckIcon, CopyIcon } from "@radix-ui/react-icons";
 import Search from "@/components/ui/Search";
-
-function formatEventTime(startTime: string, endTime: string) {
-  const start = new Date(startTime);
-  const end = new Date(endTime);
-  return `${start.toLocaleTimeString("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-  })} - ${end.toLocaleTimeString("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-  })}`;
-}
-
-function EventCard({
-  event,
-  onToggle,
-  isSelected,
-}: {
-  event: ConferenceEvent;
-  onToggle: (eventId: string) => void;
-  isSelected: boolean;
-}) {
-  return (
-    <Card>
-      <Flex align="start" justify="between" gap="4" wrap="nowrap">
-        <Box>
-          <Heading as="h3" size="3">
-            {event.title}
-          </Heading>
-          <Text size="2" color="gray">
-            {formatEventTime(event.startTime, event.endTime)}
-          </Text>
-          <Box mt="2">
-            <Text>{event.description}</Text>
-          </Box>
-        </Box>
-        <Checkbox
-          checked={isSelected}
-          onCheckedChange={() => onToggle(event.id)}
-          size="3"
-        />
-      </Flex>
-    </Card>
-  );
-}
+import EventCard from "@/components/ui/EventCard";
 
 type TextSelector<T> = (item: T) => string | null | undefined;
 
@@ -92,6 +48,9 @@ export default function DashboardPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [pendingEventIds, setPendingEventIds] = useState<Set<string>>(
+    new Set()
+  );
   const hasHydratedRef = useRef(false);
   const hasAutoCreatedRef = useRef(false);
 
@@ -180,67 +139,83 @@ export default function DashboardPage() {
   }
 
   const handleToggleEvent = (eventId: string) => {
-    setSelectedEvents((previousSelected) => {
-      const updated = new Set(previousSelected);
-      if (updated.has(eventId)) {
-        updated.delete(eventId);
-      } else {
-        updated.add(eventId);
-      }
-      const updatedIds = Array.from(updated);
-      const existing = swrData?.calendar ?? null;
-      if (status === "authenticated") {
+    // Compute next selection immediately for responsive UI
+    const nextSelected = new Set(selectedEvents);
+    if (nextSelected.has(eventId)) {
+      nextSelected.delete(eventId);
+    } else {
+      nextSelected.add(eventId);
+    }
+    const updatedIds = Array.from(nextSelected);
+    setSelectedEvents(nextSelected);
+
+    // Mark this event as pending
+    setPendingEventIds((prev) => new Set(prev).add(eventId));
+
+    const existing = swrData?.calendar ?? null;
+    if (status === "authenticated") {
+      const doRequest = async () => {
         if (existing) {
-          void mutate(
-            async () => {
-              const putRes = await fetch("/api/calendar", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  calendarId: existing.id,
-                  selectedEventIds: updatedIds,
-                }),
-              });
-              const putData = await putRes.json();
-              if (!putRes.ok)
-                throw new Error(
-                  putData.message || "Failed to update calendar."
-                );
-              return {
-                calendar: { ...existing, selectedEventIds: updatedIds },
-              } as CalendarResponse;
-            },
-            {
-              optimisticData: {
-                calendar: { ...existing, selectedEventIds: updatedIds },
-              },
-              rollbackOnError: true,
-              revalidate: false,
-            }
-          );
+          const putRes = await fetch("/api/calendar", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              calendarId: existing.id,
+              selectedEventIds: updatedIds,
+            }),
+          });
+          const putData = await putRes.json();
+          if (!putRes.ok)
+            throw new Error(putData.message || "Failed to update calendar.");
+          return {
+            calendar: { ...existing, selectedEventIds: updatedIds },
+          } as CalendarResponse;
         } else if (!hasAutoCreatedRef.current) {
           hasAutoCreatedRef.current = true;
-          void mutate(
-            async () => {
-              const postRes = await fetch("/api/calendar", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ selectedEventIds: updatedIds }),
-              });
-              const postData: CalendarResponse & { message?: string } =
-                await postRes.json();
-              if (!postRes.ok)
-                throw new Error(
-                  postData.message || "Failed to create calendar."
-                );
-              return postData as CalendarResponse;
-            },
-            { revalidate: false }
-          );
+          const postRes = await fetch("/api/calendar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ selectedEventIds: updatedIds }),
+          });
+          const postData: CalendarResponse & { message?: string } =
+            await postRes.json();
+          if (!postRes.ok)
+            throw new Error(postData.message || "Failed to create calendar.");
+          return postData as CalendarResponse;
         }
-      }
-      return updated;
-    });
+        return { calendar: existing } as CalendarResponse;
+      };
+
+      void mutate(doRequest, {
+        optimisticData: {
+          calendar: existing
+            ? { ...existing, selectedEventIds: updatedIds }
+            : existing,
+        },
+        rollbackOnError: true,
+        revalidate: false,
+        populateCache: true,
+      })
+        .catch((err: unknown) => {
+          setError(err instanceof Error ? err.message : "Update failed.");
+          // Revert local selection on error
+          setSelectedEvents(new Set(selectedEvents));
+        })
+        .finally(() => {
+          setPendingEventIds((prev) => {
+            const clone = new Set(prev);
+            clone.delete(eventId);
+            return clone;
+          });
+        });
+    } else {
+      // Not authenticated guard: just remove pending marker
+      setPendingEventIds((prev) => {
+        const clone = new Set(prev);
+        clone.delete(eventId);
+        return clone;
+      });
+    }
   };
   const calendarId = swrData?.calendar?.id ?? null;
   const calendarLink = calendarId
@@ -379,6 +354,7 @@ export default function DashboardPage() {
               key={event.id}
               event={event}
               isSelected={selectedEvents.has(event.id)}
+              isPending={pendingEventIds.has(event.id)}
               onToggle={handleToggleEvent}
             />
           ))}

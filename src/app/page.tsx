@@ -1,4 +1,5 @@
 import { SignInForm } from "@/components/auth/SignInForm";
+import { Flex } from "@radix-ui/themes";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 
@@ -10,8 +11,12 @@ export default async function Home() {
   }
 
   return (
-    <main className="min-h-screen w-full flex flex-col items-center justify-center px-4 py-8 sm:px-8 md:px-24">
+    <Flex
+      className="min-h-dvh w-full px-4 sm:px-8 md:px-24 py-8"
+      align="center"
+      justify="center"
+    >
       <SignInForm />
-    </main>
+    </Flex>
   );
 }

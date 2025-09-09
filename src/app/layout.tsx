@@ -29,7 +29,7 @@ export default function RootLayout({
         <SessionProvider>
           <Theme accentColor="violet" grayColor="mauve" radius="small">
             <div className="min-h-dvh flex flex-col">
-              <main className="flex-1">{children}</main>
+              <main className="flex-1 grow">{children}</main>
               <Footer />
             </div>
           </Theme>
