@@ -41,12 +41,15 @@ export default function EventCard({
   return (
     <Card>
       <Flex align="start" justify="between" gap="4" wrap="nowrap">
-        <Box>
+        <Flex align="start" gap="1" direction="column">
           <Heading as="h3" size="3">
             {event.title}
           </Heading>
           <Text size="2" color="gray">
             {formatEventTime(event.startTime, event.endTime)}
+          </Text>
+          <Text size="2" color="gray">
+            {event.room}
           </Text>
           {speakers.length > 0 && (
             <Box mt="2">
@@ -71,19 +74,26 @@ export default function EventCard({
           )}
           {event.description ? (
             <Box mt="3">
-              <Text>{event.description}</Text>
+              <Text size="2">{event.description}</Text>
             </Box>
           ) : null}
           {conflictingTitles.length > 0 ? (
             <Box mt="1">
               <Callout.Root color="amber" role="alert" size="1">
-                <Callout.Text size="1">
-                  Overlaps with: {conflictingTitles.join(", ")}
-                </Callout.Text>
+                <Callout.Text size="1">Overlaps with:</Callout.Text>
+                <Box mt="1">
+                  <ul className="list-disc list-inside">
+                    {conflictingTitles.map((title) => (
+                      <Text as="span" size="1" asChild key={title}>
+                        <li>{title}</li>
+                      </Text>
+                    ))}
+                  </ul>
+                </Box>
               </Callout.Root>
             </Box>
           ) : null}
-        </Box>
+        </Flex>
         {isPending ? (
           <Box
             style={{

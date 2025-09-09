@@ -47,6 +47,7 @@ export async function GET(
         description: event.description || '',
         start: startArray,
         end: endArray,
+        location: event.room,
         calName: 'My Conference Calendar',
       };
     });
