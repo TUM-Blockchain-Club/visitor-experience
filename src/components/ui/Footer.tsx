@@ -20,6 +20,11 @@ export function Footer() {
               it@tum-blockchain.com
             </Link>
           </Text>
+          <Text size="2">
+            <Link href="/privacy" aria-label="Read our privacy policy">
+              Privacy Policy
+            </Link>
+          </Text>
         </Flex>
       </Box>
     </footer>

@@ -6,7 +6,7 @@
     "predev": "node -e \"try{require('tsx');}catch(e){process.exit(1)}\" || npm i -D tsx dotenv && tsx scripts/refresh-cache.ts",
     "dev": "next dev --turbopack",
     "prebuild": "tsx scripts/refresh-cache.ts",
-    "build": "echo \"FIREBASE_PROJECT_ID is: $FIREBASE_PROJECT_ID\" && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
