@@ -421,7 +421,7 @@ export default function DashboardClient({
               <Text size="2" color="gray">
                 Looking for the venue layout?{" "}
                 <RadixLink
-                  href="/files/venue-map.pdf"
+                  href="/files/TBC_25_venue_map.pdf"
                   download
                   className="inline-flex items-center gap-1 font-medium text-blue-600 hover:underline"
                 >
