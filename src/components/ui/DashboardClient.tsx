@@ -368,7 +368,8 @@ export default function DashboardClient({
               </Heading>
               <Text size="2" color="gray">
                 Copy this link and add it to your calendar application (Google
-                Calendar, Apple Calendar, etc.)
+                Calendar, Apple Calendar, etc.) or click the button to directly
+                open your calendar app.
               </Text>
               {calendarId ? (
                 <>

@@ -122,8 +122,9 @@ export default function TutorialPage() {
 
             <Callout.Root color="orange" role="alert" size="1">
               <Callout.Text size="2">
-                Recommendation: set the sync/refresh interval as small as
-                possible (typically 5 minutes) for near real-time updates.
+                If possible, set the sync/refresh interval as small as possible
+                (typically 5 minutes) for near real-time updates. However, some
+                calendar apps won't let you configure the interval.
               </Callout.Text>
             </Callout.Root>
           </Box>
