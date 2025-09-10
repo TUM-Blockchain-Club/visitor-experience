@@ -14,7 +14,7 @@ import {
   TextField,
   Link as RadixLink,
 } from "@radix-ui/themes";
-import { CheckIcon, CopyIcon } from "@radix-ui/react-icons";
+import { CheckIcon, CopyIcon, DownloadIcon } from "@radix-ui/react-icons";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
@@ -417,6 +417,16 @@ export default function DashboardClient({
                   <Link href="/tutorial">phone setup tutorial</Link>
                 </RadixLink>
                 .
+              </Text>
+              <Text size="2" color="gray">
+                Looking for the venue layout?{" "}
+                <RadixLink
+                  href="/files/TBC_25_venue_map.pdf"
+                  download
+                  className="inline-flex items-center gap-1 font-medium text-blue-600 hover:underline"
+                >
+                  View the map here.
+                </RadixLink>
               </Text>
             </Flex>
           </Card>
