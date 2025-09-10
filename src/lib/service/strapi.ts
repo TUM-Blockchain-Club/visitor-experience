@@ -2,7 +2,7 @@ import axios from "axios";
 import fs from "node:fs";
 import path from "node:path";
 
-import { Session } from "@/lib/model/session";
+import { Session, StageMap, Stages } from "@/lib/model/session";
 import { Speaker } from "@/lib/model/speaker";
 
 const STRAPI_BASE_URL =
@@ -49,6 +49,11 @@ async function fetchSessionsFromStrapi(): Promise<Session[]> {
       );
 
       const pageData: Session[] = res.data.data ?? [];
+
+      for (const session of pageData) {
+        session.room = StageMap[session.room as (typeof Stages)[number]];
+      }
+
       sessions.push(...pageData);
 
       const pagination = res.data?.meta?.pagination;
