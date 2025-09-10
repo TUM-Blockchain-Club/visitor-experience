@@ -423,9 +423,10 @@ export default function DashboardClient({
                 <RadixLink
                   href="/files/venue-map.pdf"
                   download
-                  className="font-medium text-blue-600 hover:underline"
+                  className="inline-flex items-center gap-1 font-medium text-blue-600 hover:underline"
                 >
                   View the map here
+                  <DownloadIcon className="h-4 w-4" />
                 </RadixLink>
                 .
               </Text>
