@@ -418,7 +418,11 @@ export default function DashboardClient({
                 </RadixLink>
                 .
               </Text>
-              <Text size="2" color="gray">
+              <Text
+                size="2"
+                color="gray"
+                className="flex items-center justify-center gap-1"
+              >
                 Looking for the venue layout?{" "}
                 <RadixLink
                   href="/files/TBC_25_venue_map.pdf"
@@ -428,7 +432,6 @@ export default function DashboardClient({
                   View the map here
                   <DownloadIcon className="h-4 w-4" />
                 </RadixLink>
-                .
               </Text>
             </Flex>
           </Card>
