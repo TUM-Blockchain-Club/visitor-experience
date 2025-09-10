@@ -48,7 +48,7 @@ export async function GET(
         start: startArray,
         end: endArray,
         location: event.room,
-        calName: 'My Conference Calendar',
+        calName: 'TUM Blockchain Conference 2025 Calendar',
       };
     });
 
