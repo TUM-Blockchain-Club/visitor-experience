@@ -124,7 +124,8 @@ export default function TutorialPage() {
               <Callout.Text size="2">
                 If possible, set the sync/refresh interval as small as possible
                 (typically 5 minutes) for near real-time updates. However, some
-                calendar apps won't let you configure the interval.
+                calendar apps won't let you configure the interval. In this
+                case, you can manually refresh your calendar.
               </Callout.Text>
             </Callout.Root>
           </Box>

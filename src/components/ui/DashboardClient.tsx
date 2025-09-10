@@ -400,9 +400,16 @@ export default function DashboardClient({
                   </Box>
                 </>
               ) : (
-                <Skeleton>
-                  <div style={{ height: 36, width: "100%" }} />
-                </Skeleton>
+                <>
+                  <Skeleton>
+                    <div style={{ height: 36, width: "100%" }} />
+                  </Skeleton>
+                  <Box mt="2">
+                    <Skeleton>
+                      <div style={{ height: 32, width: 220 }} />
+                    </Skeleton>
+                  </Box>
+                </>
               )}
               <Text size="2" color="gray">
                 Need help? See the{" "}
