@@ -12,6 +12,7 @@ import {
   Skeleton,
   Text,
   TextField,
+  Link as RadixLink,
 } from "@radix-ui/themes";
 import { CheckIcon, CopyIcon } from "@radix-ui/react-icons";
 import { signOut, useSession } from "next-auth/react";
@@ -20,6 +21,7 @@ import useSWR from "swr";
 import Search from "@/components/ui/Search";
 import EventCard from "@/components/ui/EventCard";
 import { Speaker } from "@/lib/model/speaker";
+import Link from "next/link";
 
 declare global {
   interface Window {
@@ -249,6 +251,9 @@ export default function DashboardClient({
         typeof window !== "undefined" ? window.location.origin : ""
       }/api/calendar/${calendarId}`
     : "";
+  const webcalLink = calendarId
+    ? calendarLink.replace(/^https?:\/\//, "webcal://")
+    : "";
 
   const handleCopyLink = async () => {
     if (!calendarLink) return;
@@ -366,31 +371,45 @@ export default function DashboardClient({
                 Calendar, Apple Calendar, etc.)
               </Text>
               {calendarId ? (
-                <TextField.Root
-                  className="w-full"
-                  readOnly
-                  value={calendarLink}
-                  onFocus={(e: FocusEvent<HTMLInputElement>) =>
-                    e.currentTarget.select()
-                  }
-                >
-                  <TextField.Slot side="right" className="shrink-0">
-                    <IconButton
-                      size="1"
-                      aria-label={copied ? "Copied" : "Copy calendar link"}
-                      onClick={handleCopyLink}
-                      type="button"
-                      variant="ghost"
-                    >
-                      {copied ? <CheckIcon /> : <CopyIcon />}
-                    </IconButton>
-                  </TextField.Slot>
-                </TextField.Root>
+                <>
+                  <TextField.Root
+                    className="w-full"
+                    readOnly
+                    value={calendarLink}
+                    onFocus={(e: FocusEvent<HTMLInputElement>) =>
+                      e.currentTarget.select()
+                    }
+                  >
+                    <TextField.Slot side="right" className="shrink-0">
+                      <IconButton
+                        size="1"
+                        aria-label={copied ? "Copied" : "Copy calendar link"}
+                        onClick={handleCopyLink}
+                        type="button"
+                        variant="ghost"
+                      >
+                        {copied ? <CheckIcon /> : <CopyIcon />}
+                      </IconButton>
+                    </TextField.Slot>
+                  </TextField.Root>
+                  <Box mt="2">
+                    <Button asChild variant="soft" size="2">
+                      <a href={webcalLink}>Subscribe in calendar app</a>
+                    </Button>
+                  </Box>
+                </>
               ) : (
                 <Skeleton>
                   <div style={{ height: 36, width: "100%" }} />
                 </Skeleton>
               )}
+              <Text size="2" color="gray">
+                Need help? See the{" "}
+                <RadixLink asChild className="cursor-pointer">
+                  <Link href="/tutorial">phone setup tutorial</Link>
+                </RadixLink>
+                .
+              </Text>
             </Flex>
           </Card>
 
