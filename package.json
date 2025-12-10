@@ -20,7 +20,7 @@
     "google-auth-library": "^10.3.0",
     "googleapis": "^159.0.0",
     "ics": "^3.8.1",
-    "next": "^15.5.2",
+    "next": "15.5.7",
     "next-auth": "^5.0.0-beta.29",
     "nodemailer": "^6.10.1",
     "react": "19.1.0",
